@@ -6,6 +6,27 @@ Welcome to Buffyverse TCG, a fan-made trading card game inspired by the world of
 
 The game is currently in development, with more card artwork, improvements and additional content planned for future updates.
 
+
+
+## 📸 Screenshots
+
+### Main Menu
+![Main Menu](screenshots/main_menu.jpg)
+
+### Card Collection
+![Card Collection](screenshots/collection.jpg)
+
+### Gameplay
+![Gameplay](screenshots/game.jpg)
+
+### Story Mode
+![Story Mode](screenshots/story_mode.jpg)
+
+### Game Rules
+![Game Rules](screenshots/rules.jpg)
+  
+
+
 ## 🎮 Download
 
 **Current version:** v1.3.0 (Pre-release)
