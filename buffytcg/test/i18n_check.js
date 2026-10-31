@@ -1,0 +1,23 @@
+// prüft, ob alle verwendeten Schlüssel übersetzt sind und alle Karten Englisch haben
+global.localStorage = { d:{}, getItem(k){return this.d[k]||null}, setItem(k,v){this.d[k]=v} };
+for (const f of ['version','cards','i18n-cards','i18n','engine','ai','decks','achievements','story','scenes']) require('../js/'+f+'.js');
+const B = globalThis.BTCG, fs = require('fs');
+const src = fs.readFileSync(__dirname+'/../js/ui.js','utf8') + fs.readFileSync(__dirname+'/../js/engine.js','utf8') + fs.readFileSync(__dirname+'/../js/decks.js','utf8');
+const keys = new Set([...src.matchAll(/(?:\bt|M)\('([a-zA-Z0-9_.]+)'/g)].map(m=>m[1]));
+const extra = ['log.ko','log.koBig','log.dmgWeak','log.dmgRes','g.ko','g.koBig'];
+extra.forEach(k=>keys.add(k));
+['Unterstützer','Gegenstand','Ausrüstung','Stadion'].forEach(s=>{keys.add('sub.'+s); keys.add('c.rule.'+s);});
+['para','sleep','poison','burn'].forEach(s=>keys.add('status.'+s));
+['beginner','erfahren','profi'].forEach(s=>{keys.add('lv.'+s); keys.add('lv.'+s+'.d');});
+B.PREBUILT.forEach(d=>{keys.add('deck.'+d.id+'.n'); keys.add('deck.'+d.id+'.d');});
+['welcome','board','energy','bench','end1','opp','energy2','evolve','attack','weak','free'].forEach(k=>keys.add('tu.'+k));
+const missing = [...keys].filter(k=>!B.hasKey(k) && !/^(c\.rule\.|deck\.|tu\.|lv\.|status\.|sub\.)$/.test(k));
+console.log('Schlüssel:', keys.size, 'fehlend:', missing);
+const noEn = Object.values(B.CARDS).filter(c=>!B.CARD_EN[c.id]).map(c=>c.id);
+console.log('Karten ohne EN:', noEn);
+const atkMismatch = Object.values(B.CARDS).filter(c=>c.kind==='char' && B.CARD_EN[c.id] && (B.CARD_EN[c.id].a||[]).length !== c.attacks.length).map(c=>c.id);
+const abMissing = Object.values(B.CARDS).filter(c=>c.ability && !(B.CARD_EN[c.id]||{}).ab).map(c=>c.id);
+const trMissing = Object.values(B.CARDS).filter(c=>c.kind==='trainer' && !(B.CARD_EN[c.id]||{}).t).map(c=>c.id);
+console.log('Attacken-Anzahl falsch:', atkMismatch, 'Fähigkeit fehlt:', abMissing, 'Trainertext fehlt:', trMissing);
+B.setLang('en'); console.log(B.fxText(B.CARDS.buffy1.attacks[0].fx), '|', B.t('log.attack',{c:'@buffy2',a:'§buffy2:1'}));
+B.setLang('de'); console.log(B.fxText(B.CARDS.buffy1.attacks[0].fx), '|', B.t('log.attack',{c:'@buffy2',a:'§buffy2:1'}));
